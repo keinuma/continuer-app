@@ -10,7 +10,7 @@ RUN apk update
 WORKDIR /app
 RUN pnpm install turbo --global
 COPY . .
-RUN turbo prune web --docker
+RUN turbo prune api --docker
 
 
 FROM base AS builder
@@ -28,7 +28,7 @@ RUN pnpm install --frozen-lockfile
 COPY --from=deps /app/out/full/ .
 COPY turbo.json turbo.json
 
-RUN pnpm turbo build --filter=web...
+RUN pnpm turbo build --filter=api...
 
 
 FROM base AS runner
@@ -36,19 +36,14 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-USER nextjs
+RUN addgroup --system --gid 1001 nestjs
+RUN adduser --system --uid 1001 nestjs
+USER nestjs
 
-COPY --from=builder /app/apps/web/next.config.mjs .
-COPY --from=builder /app/apps/web/package.json .
+COPY --from=builder /app .
 
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
-
-EXPOSE 3000
-ENV PORT 3000
+EXPOSE 3001
+ENV PORT 3001
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "apps/web/server.js"]
+CMD ["node", "apps/api/dist/main.js"]
