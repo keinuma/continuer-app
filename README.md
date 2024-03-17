@@ -50,6 +50,13 @@ cd my-turborepo
 pnpm dev
 ```
 
+### Build and Deploy with Docker
+
+```sh
+docker build --platform=linux/amd64 --tag asia-northeast1-docker.pkg.dev/${project-id}/${repository-id}/app:latest -f ./apps/web Dockerfile .
+docker push asia-northeast1-docker.pkg.dev/${project-id}/${repository-id}/app:latest
+```
+
 ### Remote Caching
 
 Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
