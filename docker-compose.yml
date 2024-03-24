@@ -19,6 +19,20 @@ services:
     restart: always
     ports:
       - 3001:3001
+    env_file:
+      - .env
+    networks:
+      - app_network
+  db:
+    container_name: db
+    image: mysql:8.0
+    platform: linux/amd64
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: continuer
+      TZ: "Asia/Tokyo"
     networks:
       - app_network
 
